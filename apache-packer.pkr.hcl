@@ -55,11 +55,16 @@ source "amazon-ebs" "static-web-ami" {
   }
 }
 
+variable "httpd_port" {
+  type    = string
+  default = "80" # Port par défaut pour HTTPD, remplacez-le par le port souhaité
+}
+
 build {
   sources = ["source.amazon-ebs.static-web-ami"]
   provisioner "ansible" {
-    playbook_file = "./play.yml"
-    # Fix handshake issues for ansible
+    playbook_file = "./repo/play.yml" # Assurez-vous que le chemin est correct
+    extra_arguments = ["-e", "httpd_port=${var.httpd_port}"]
     use_proxy = false
   }
 }

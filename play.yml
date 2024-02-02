@@ -1,0 +1,9 @@
+- name: Configure HTTPD to listen on specified port
+  hosts: all
+  become: yes
+  tasks:
+    - name: Update httpd.conf to listen on specified port
+      lineinfile:
+        path: /etc/httpd/conf/httpd.conf
+        regexp: "^Listen"
+        line: "Listen {{ httpd_port }}"
