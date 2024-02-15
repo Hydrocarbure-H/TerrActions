@@ -30,6 +30,7 @@ jobs:
         run: packer build -var 'app_name=${{ env.APP_NAME }}' -var 'httpd_port=${{ env.HTTPD_PORT }}' ./repo/apache-packer.pkr.hcl
 
   deploy:
+    needs: build
     runs-on: self-hosted
 
     steps:
@@ -51,6 +52,7 @@ jobs:
       run: terraform apply -auto-approve
 
   destroy:
+    needs: deploy
     runs-on: self-hosted
     steps:
     - name: Checkout code
