@@ -16,7 +16,7 @@ jobs:
         run: git clone https://github.com/Hydrocarbure-H/TerrActions ./repo
 
       - name: Setup Packer
-        uses: hashicorp/setup-packer@latest
+        uses: hashicorp/setup-packer@v1.14.9
         with:
           packer-version: "1.7.0"
 
