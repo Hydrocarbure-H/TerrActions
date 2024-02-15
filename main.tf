@@ -1,4 +1,4 @@
-# Set the AWS provider with the desired region test
+# Set the AWS provider with the desired region
 provider "aws" {
   region = var.aws_region
 }
