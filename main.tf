@@ -182,7 +182,7 @@ most_recent = true
 owners = ["833574749817"]
 filter {
     name   = "image-id"
-    values = ["ami-009bc99353224f1ec"]
+    values = ["ami-0cef981c3b45384fc"]
   }
 }
 # Create a WebApp instance
