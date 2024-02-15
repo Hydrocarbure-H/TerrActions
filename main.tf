@@ -34,7 +34,7 @@ variable "instance_type" {
 ########################
 variable "personal_ip_address" {
   type = string
-  value = "217.26.204.244"
+  default = "217.26.204.244"
 }
 
 
