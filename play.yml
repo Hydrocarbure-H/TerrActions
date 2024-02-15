@@ -1,9 +1,38 @@
-- name: Configure HTTPD to listen on specified port
-  hosts: all
-  become: yes
+---
+- hosts: all
+  become: true
   tasks:
-    - name: Update httpd.conf to listen on specified port
+    - name: Install Git Package # Installation des paquets nécessaires
+      apt:
+        name: git
+        state: present
+        update_cache: yes
+    - name: Install Apache2 package
+      apt: name=apache2 update_cache=yes state=latest
+
+    - name: Change Apache port # Changement du port d'écoute d'Apache2
       lineinfile:
-        path: /etc/httpd/conf/httpd.conf
+        path: /etc/apache2/ports.conf
         regexp: "^Listen"
-        line: "Listen {{ httpd_port }}"
+        line: "Listen 8080"
+
+    - name: Change VirtualHost port # Changement du port dans la configuration du VHost
+      lineinfile:
+        path: /etc/apache2/sites-available/000-default.conf
+        regexp: "^<VirtualHost"
+        line: "<VirtualHost *:8080>"
+
+    - name: Remove default website # Suppression des fichiers HTML par défaut
+      file:
+        path: /var/www/html
+        state: absent
+
+    - name: Clone website # Dépoiement du site depuis un repository GitHub
+      git:
+        repo: https://github.com/cloudacademy/static-website-example
+        dest: /var/www/html
+
+    - name: Restart Apache # Redémarrage du service Apache2
+      service:
+        name: apache2
+        state: restarted
