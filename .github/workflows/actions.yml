@@ -68,3 +68,27 @@ jobs:
 
     - name: Terraform Destroy
       run: terraform destroy -auto-approve
+      
+  deregister-ami:
+    needs: destroy
+    runs-on: self-hosted
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup AWS CLI
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: your-aws-region
+
+    - name: Désenregistrer l'AMI
+      run: |
+        ami_id=$(aws ec2 describe-images --filters "Name=name,Values=WebApp*" --query 'Images[0].ImageId' --output text)
+        if [ -n "$ami_id" ]; then
+          aws ec2 deregister-image --image-id $ami_id
+          echo "AMI $ami_id désenregistrée avec succès."
+        else
+          echo "Aucune AMI correspondante trouvée."
+        fi
