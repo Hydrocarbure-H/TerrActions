@@ -177,25 +177,24 @@ resource "aws_security_group" "private" {
 ########################
 # Instances
 ########################
+# Remplacez la section AMI statique avec la récupération automatique de l'AMI la plus récente
 data "aws_ami" "webapp" {
-most_recent = true
-owners = ["833574749817"]
-filter {
-    name   = "image-id"
-    values = ["ami-0cef981c3b45384fc"]
-  }
+  most_recent = true
+  owners      = ["self"]  # ou les propriétaires appropriés, si nécessaire
+  name_regex  = "^WebApp"
 }
+
 # Create a WebApp instance
 resource "aws_instance" "tp_devops_webapp_instance" {
-    ami = data.aws_ami.webapp.id
-    instance_type = var.instance_type
-    key_name = "monkey"
-    iam_instance_profile = "LabInstanceProfile"
-    subnet_id            = aws_subnet.tp_devops_public_subnet.id
+  ami                  = data.aws_ami.webapp.id
+  instance_type        = var.instance_type
+  key_name             = "monkey"
+  iam_instance_profile = "LabInstanceProfile"
+  subnet_id            = aws_subnet.tp_devops_public_subnet.id
 
-    tags = {
+  tags = {
     Name = "WebServer"
-    }
+  }
 
-    vpc_security_group_ids = [aws_security_group.public.id]
+  vpc_security_group_ids = [aws_security_group.public.id]
 }
