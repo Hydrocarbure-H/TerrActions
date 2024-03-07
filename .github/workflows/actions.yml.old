@@ -1,1 +1,70 @@
+name: Build and deploy our website.
 
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Clone Packer template repository
+        run: git clone https://github.com/Hydrocarbure-H/TerrActions ./repo
+
+      - name: Setup Packer
+        uses: hashicorp/setup-packer@main
+        with:
+          packer-version: "1.7.0"
+
+      - name: Validate Packer Template
+        run: packer validate ./repo/apache-packer.pkr.hcl
+
+      - name: Build AMI with Packer
+        env:
+          APP_NAME: "TerrAction"
+          HTTPD_PORT: "8080"
+        run: packer build -var 'app_name=${{ env.APP_NAME }}' -var 'httpd_port=${{ env.HTTPD_PORT }}' ./repo/apache-packer.pkr.hcl
+
+  deploy:
+    needs: build
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 1.0.0
+
+    - name: Terraform Init
+      run: terraform init
+
+    - name: Terraform Plan
+      run: terraform plan
+
+    - name: Terraform Apply
+      run: terraform apply -auto-approve
+
+  destroy:
+    needs: deploy
+    runs-on: self-hosted
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 1.0.0
+
+    - name: Terraform Init
+      run: terraform init
+
+    - name: Terraform Destroy
+      run: terraform destroy -auto-approve
