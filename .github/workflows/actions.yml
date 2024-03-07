@@ -79,8 +79,8 @@ jobs:
     - name: Setup AWS CLI
       uses: aws-actions/configure-aws-credentials@v2
       with:
-        aws-access-key-id: ${{ ASIA4EFHNIZ4SBGMVS4X }}
-        aws-secret-access-key: ${{ SObl2ercOH0g78kL+4CR5xWB6XEjJpPtEX7QuAYs }}
+        aws-access-key-id: ${{  }}
+        aws-secret-access-key: ${{  }}
         aws-region: us-east-1
 
     - name: Désenregistrer l'AMI
